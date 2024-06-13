@@ -43,7 +43,7 @@ def update_frame(frame, img, states, width, height, species_colors, winnower_col
     img.set_array(state)
     return [img]
 
-def animate_game(logfile, interval):
+def animate_game(logfile, interval, output):
     states = load_game_states(logfile)
     width, height = get_grid_dimensions(states)
     species_colors, winnower_color, empty_color = create_color_map(states, width, height)
@@ -56,15 +56,19 @@ def animate_game(logfile, interval):
         fig, update_frame, frames=len(states), fargs=(img, states, width, height, species_colors, winnower_color, empty_color), blit=True, interval=interval
     )
 
-    plt.show()
+    if output:
+        ani.save(output, writer='pillow')
+    else:
+        plt.show()
 
 def main():
     parser = argparse.ArgumentParser(description="Animate the Flower game from Destiny 2.")
     parser.add_argument("logfile", type=str, help="Log file for game states")
     parser.add_argument("--interval", type=int, default=200, help="Interval between frames in milliseconds")
+    parser.add_argument("--output", type=str, help="Output file for the animation (e.g., animation.gif)")
     args = parser.parse_args()
 
-    animate_game(args.logfile, args.interval)
+    animate_game(args.logfile, args.interval, args.output)
 
 if __name__ == "__main__":
     main()
